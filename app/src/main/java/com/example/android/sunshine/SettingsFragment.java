@@ -31,13 +31,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements  Share
         }
     }
 
-    // COMPLETED (5) Override onCreatePreferences and add the preference xml file using addPreferencesFromResource
+
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         /* Add 'general' preferences, defined in the XML file */
         addPreferencesFromResource(R.xml.pref_inflator);
-
-        // COMPLETED (9) Set the preference summary on each preference that isn't a CheckBoxPreference
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
         PreferenceScreen prefScreen = getPreferenceScreen();
         int count = prefScreen.getPreferenceCount();
@@ -49,8 +47,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements  Share
             }
         }
     }
-
-    // COMPLETED (13) Unregister SettingsFragment (this) as a SharedPreferenceChangedListener in onStop
     @Override
     public void onStop() {
         super.onStop();
@@ -58,8 +54,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements  Share
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
-
-    // COMPLETED (12) Register SettingsFragment (this) as a SharedPreferenceChangedListener in onStart
     @Override
     public void onStart() {
         super.onStart();
@@ -68,7 +62,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements  Share
                 .registerOnSharedPreferenceChangeListener(this);
     }
 
-    // COMPLETED (11) Override onSharedPreferenceChanged to update non CheckBoxPreferences when they are changed
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference preference = findPreference(key);
