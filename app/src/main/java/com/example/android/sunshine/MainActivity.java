@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         setContentView(R.layout.activity_forecast);
 
         /*
-         * Using findViewById, we get a reference to our RecyclerView from xml. This allows us to
+         * Using findViewById, we get a reference to our RecyclerView from pref_inflator. This allows us to
          * do things like set the adapter of the RecyclerView and toggle the visibility.
          */
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_forecast);
@@ -326,24 +326,23 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        switch (id) {
+            case (R.id.action_refresh): {
+                invalidateData();
+                getSupportLoaderManager().restartLoader(FORECAST_LOADER_ID, null, this);
+                break;
+            }
 
-        if (id == R.id.action_refresh) {
-            invalidateData();
-            getSupportLoaderManager().restartLoader(FORECAST_LOADER_ID, null, this);
-            return true;
+            case ( R.id.action_map):{
+                openLocationInMap();
+                break;
+            }
+            case (R.id.action_settings):{
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+                break;
+            }
         }
-
-        if (id == R.id.action_map) {
-            openLocationInMap();
-            return true;
-        }
-
-        // TODO (1) Add new Activity called SettingsActivity using Android Studio wizard
-        // Do step 2 in SettingsActivity
-        // TODO (2) Set setDisplayHomeAsUpEnabled to true on the support ActionBar
-
-        // TODO (6) Launch SettingsActivity when the Settings option is clicked
-
         return super.onOptionsItemSelected(item);
     }
 }
