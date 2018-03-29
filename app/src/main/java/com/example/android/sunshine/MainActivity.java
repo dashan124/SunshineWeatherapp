@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v7.preference.PreferenceManager;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.content.SharedPreferences;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,7 +34,7 @@ import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 import java.net.URL;
 
 // TODO (8) Implement ForecastAdapterOnClickHandler from the MainActivity
-public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler, LoaderCallbacks<String[]> {
+public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHandler, LoaderCallbacks<String[]> ,SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
     private TextView mErrorMessageDisplay;
 
     private ProgressBar mLoadingIndicator;
+    private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
+
 
     private static final int FORECAST_LOADER_ID = 0;
 
@@ -134,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callback);
 
         Log.d(TAG, "onCreate: registering preference changed listener");
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(this);
     }
 
     /**
@@ -258,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
      * open the Common Intents page
      */
     private void openLocationInMap() {
-        String addressString = "1600 Ampitheatre Parkway, CA";
+        String addressString = SunshinePreferences.getPreferredWeatherLocation(this);
         Uri geoLocation = Uri.parse("geo:0,0?q=" + addressString);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -338,11 +344,32 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
                 break;
             }
             case (R.id.action_settings):{
-                Intent i = new Intent(this, SettingsActivity.class);
+                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(i);
                 break;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (PREFERENCES_HAVE_BEEN_UPDATED) {
+            Log.d(TAG, "onStart: preferences were updated");
+            getSupportLoaderManager().restartLoader(FORECAST_LOADER_ID, null, this);
+            PREFERENCES_HAVE_BEEN_UPDATED = false;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        PREFERENCES_HAVE_BEEN_UPDATED = true;
     }
 }
