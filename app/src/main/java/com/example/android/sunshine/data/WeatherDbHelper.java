@@ -18,9 +18,8 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         final String SQL_CREATE_WEATHER_TABLE =
-
                 "CREATE TABLE " + WeatherContract.WeatherEntry.TABLE_NAME + " (" +
-
+//              COMPLETED (1) Append NOT NULL to each column's type declaration except for the _ID
                 /*
                  * WeatherEntry did not explicitly declare a column called "_ID". However,
                  * WeatherEntry implements the interface, "BaseColumns", which does have a field
@@ -28,18 +27,18 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
                  */
                         WeatherContract.WeatherEntry._ID               + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 
-                        WeatherContract.WeatherEntry.COLUMN_DATE       + " INTEGER, "                 +
+                        WeatherContract.WeatherEntry.COLUMN_DATE       + " INTEGER NOT NULL, "                 +
 
-                        WeatherContract.WeatherEntry.COLUMN_WEATHER_ID + " INTEGER, "                 +
+                        WeatherContract.WeatherEntry.COLUMN_WEATHER_ID + " INTEGER NOT NULL, "                 +
 
-                        WeatherContract.WeatherEntry.COLUMN_MIN_TEMP   + " REAL, "                    +
-                        WeatherContract.WeatherEntry.COLUMN_MAX_TEMP   + " REAL, "                    +
+                        WeatherContract.WeatherEntry.COLUMN_MIN_TEMP   + " REAL NOT NULL, "                    +
+                        WeatherContract.WeatherEntry.COLUMN_MAX_TEMP   + " REAL NOT NULL, "                    +
 
-                        WeatherContract.WeatherEntry.COLUMN_HUMIDITY   + " REAL, "                    +
-                        WeatherContract.WeatherEntry.COLUMN_PRESSURE   + " REAL, "                    +
+                        WeatherContract.WeatherEntry.COLUMN_HUMIDITY   + " REAL NOT NULL, "                    +
+                        WeatherContract.WeatherEntry.COLUMN_PRESSURE   + " REAL NOT NULL, "                    +
 
-                        WeatherContract.WeatherEntry.COLUMN_WIND_SPEED + " REAL, "                    +
-                        WeatherContract.WeatherEntry.COLUMN_DEGREES    + " REAL" + ");";
+                        WeatherContract.WeatherEntry.COLUMN_WIND_SPEED + " REAL NOT NULL, "                    +
+                        WeatherContract.WeatherEntry.COLUMN_DEGREES    + " REAL NOT NULL" + ");";
 
         /*
          * After we've spelled out our SQLite table creation statement above, we actually execute
